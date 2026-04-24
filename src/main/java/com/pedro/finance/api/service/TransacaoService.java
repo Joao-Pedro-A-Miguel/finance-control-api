@@ -125,16 +125,16 @@ public class TransacaoService {
         transacaoRepository.deleteById(id);
     }
 
-    private TransacaoResponseDTO mapToResponse(Transacao t){
+    private TransacaoResponseDTO mapToResponse(Transacao transacao){
         return new TransacaoResponseDTO(
-                t.getId(),
-                t.getDescricao(),
-                t.getValor(),
-                t.getData(),
+                transacao.getId(),
+                transacao.getDescricao(),
+                transacao.getValor(),
+                transacao.getData(),
                 new CategoriaResponseDTO(
-                        t.getCategoria().getId(),
-                        t.getCategoria().getNome(),
-                        t.getCategoria().getTipo()
+                        transacao.getCategoria().getId(),
+                        transacao.getCategoria().getNome(),
+                        transacao.getCategoria().getTipo()
                 )
         );
     }

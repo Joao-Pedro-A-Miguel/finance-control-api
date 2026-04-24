@@ -12,7 +12,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // EM ANALISE
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<Map<String, String>> handleRegraNegocio(RegraNegocioException ex) {
 

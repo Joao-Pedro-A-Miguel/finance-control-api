@@ -1,9 +1,7 @@
 package com.pedro.finance.api.controller;
 
 
-import com.pedro.finance.api.dto.TransacaoResponseDTO;
 import com.pedro.finance.api.dto.UsuarioRequestDTO;
-import com.pedro.finance.api.entity.Usuario;
 import com.pedro.finance.api.dto.UsuarioResponseDTO;
 import com.pedro.finance.api.service.UsuarioService;
 import jakarta.validation.Valid;

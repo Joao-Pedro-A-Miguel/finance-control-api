@@ -43,13 +43,13 @@ public class CategoriaService {
                 .toList();
     }
 
-    public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO dto){
+    public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO categoriaDTO){
 
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        categoria.setNome(dto.getNome());
-        categoria.setTipo(dto.getTipo());
+        categoria.setNome(categoriaDTO.getNome());
+        categoria.setTipo(categoriaDTO.getTipo());
 
         Categoria salva = categoriaRepository.save(categoria);
 

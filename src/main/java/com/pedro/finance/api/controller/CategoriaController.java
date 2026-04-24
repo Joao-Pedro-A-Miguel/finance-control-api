@@ -2,7 +2,6 @@ package com.pedro.finance.api.controller;
 
 import com.pedro.finance.api.dto.CategoriaRequestDTO;
 import com.pedro.finance.api.dto.CategoriaResponseDTO;
-import com.pedro.finance.api.entity.Categoria;
 import com.pedro.finance.api.service.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;

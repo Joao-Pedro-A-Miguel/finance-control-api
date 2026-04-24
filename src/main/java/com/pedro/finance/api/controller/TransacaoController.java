@@ -1,7 +1,6 @@
 package com.pedro.finance.api.controller;
 
 import com.pedro.finance.api.dto.TransacaoRequestDTO;
-import com.pedro.finance.api.entity.Transacao;
 import com.pedro.finance.api.dto.TransacaoResponseDTO;
 import com.pedro.finance.api.service.TransacaoService;
 import jakarta.validation.Valid;
