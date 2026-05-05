@@ -155,34 +155,36 @@ Deletar
 🔹 Resumo mensal
 GET /transacoes/resumo?mes=5&ano=2026
 Response:
+```
 {
  "totalReceitas": 5000,
  "totalDespesas": 2000,
  "saldo": 3000
 }
+```
 
 🔹 Filtro por mês/ano
 GET /transacoes/filtro?mes=5&ano=2026
 
  Observações importantes
-Não existe perfil ADMIN neste projeto
-Cada usuário acessa apenas seus próprios dados
-Exclusões são restritas ao usuário autenticado
-Projeto em evolução (pode receber melhorias futuras)
+• Não existe perfil ADMIN neste projeto
+• Cada usuário acessa apenas seus próprios dados
+• Exclusões são restritas ao usuário autenticado
+• Projeto em evolução (pode receber melhorias futuras)
 
  Melhorias futuras
- Paginação (Pageable)
- Testes unitários
- Documentação com Swagger
- Dashboard (frontend futuro)
+ • Paginação (Pageable)
+ • Testes unitários
+ • Documentação com Swagger
+ • Dashboard (frontend futuro)
 
  Autor
 João Pedro
 
  Considerações finais
-Projeto desenvolvido com foco em:
-Boas práticas de backend
-Segurança com JWT
-Organização de código
-Regras de negócio bem definidas
+• Projeto desenvolvido com foco em:
+• Boas práticas de backend
+• Segurança com JWT
+• Organização de código
+• Regras de negócio bem definidas
 
