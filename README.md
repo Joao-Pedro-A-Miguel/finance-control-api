@@ -167,9 +167,13 @@ Response:
 GET /transacoes/filtro?mes=5&ano=2026
 
  Observações importantes
+ 
 • Não existe perfil ADMIN neste projeto
+
 • Cada usuário acessa apenas seus próprios dados
+
 • Exclusões são restritas ao usuário autenticado
+
 • Projeto em evolução (pode receber melhorias futuras)
 
  Melhorias futuras
@@ -183,8 +187,12 @@ João Pedro
 
  Considerações finais
 • Projeto desenvolvido com foco em:
+
 • Boas práticas de backend
+
 • Segurança com JWT
+
 • Organização de código
+
 • Regras de negócio bem definidas
 
