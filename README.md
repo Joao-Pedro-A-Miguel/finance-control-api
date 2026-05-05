@@ -1,8 +1,8 @@
-Finance Control API
+📊 Finance Control API
 
 API REST para controle financeiro pessoal, permitindo o gerenciamento de usuários, categorias e transações com autenticação segura via JWT.
 
-Tecnologias utilizadas
+🚀 Tecnologias utilizadas
 Java 17
 Spring Boot
 Spring Security
@@ -10,8 +10,7 @@ JWT (JSON Web Token)
 Spring Data JPA
 MySQL
 Docker
-
-Funcionalidades
+🔐 Funcionalidades
 ✅ Cadastro e autenticação de usuários
 ✅ Criação, edição e exclusão de categorias
 ✅ Registro de transações (receitas e despesas)
@@ -27,7 +26,7 @@ A aplicação utiliza autenticação baseada em JWT.
 O usuário faz login e recebe um token
 O token deve ser enviado no header das requisições:
 Authorization: Bearer SEU_TOKEN_AQUI
- Isolamento de dados
+🔒 Isolamento de dados
 
 Cada usuário só pode acessar:
 
@@ -38,7 +37,7 @@ Sua própria conta
 Isso é garantido por queries como:
 
 findByIdAndUsuarioEmail
- Estrutura do projeto
+📦 Estrutura do projeto
 api
 ├── config
 ├── controller
@@ -48,8 +47,8 @@ api
 ├── repository
 ├── security
 └── service
- Configuração do ambiente
- Variáveis de ambiente
+⚙️ Configuração do ambiente
+🔑 Variáveis de ambiente
 
 Crie um arquivo .env ou configure:
 
@@ -59,7 +58,7 @@ DB_USER=root
 DB_PASSWORD=senha
 
 JWT_SECRET=sua_chave_super_secreta_com_32_bytes
-application.properties
+📄 application.properties
 spring.datasource.url=jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}
 spring.datasource.username=${DB_USER}
 spring.datasource.password=${DB_PASSWORD}
@@ -133,7 +132,7 @@ O projeto está em evolução e pode receber melhorias futuras
 
 Desenvolvido por João Pedro
 
-Considerações finais
+⭐ Considerações finais
 
 Este projeto foi desenvolvido com foco em boas práticas de backend:
 
@@ -141,4 +140,3 @@ Separação de responsabilidades
 Segurança com JWT
 Validações de negócio
 Código limpo e organizado
-
