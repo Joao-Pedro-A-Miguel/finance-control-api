@@ -10,7 +10,13 @@ import com.pedro.finance.api.entity.*;
 import com.pedro.finance.api.repository.CategoriaRepository;
 import com.pedro.finance.api.repository.TransacaoRepository;
 import com.pedro.finance.api.repository.UsuarioRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,15 +28,16 @@ public class TransacaoService {
     private final CategoriaRepository categoriaRepository;
     private final UsuarioRepository usuarioRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(TransacaoService.class);
+
     public TransacaoService(TransacaoRepository transacaoRepository, CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository) {
         this.transacaoRepository = transacaoRepository;
         this.categoriaRepository = categoriaRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional
     public TransacaoResponseDTO salvar(TransacaoRequestDTO transacaoDTO){
-
-
 
         if (transacaoDTO.getTipo() == Tipo.RECEITA && transacaoDTO.getValor() < 0) {
             throw new RegraNegocioException("Receita não pode ser negativa");
@@ -43,19 +50,20 @@ public class TransacaoService {
             throw new RegraNegocioException("Categoria ID não pode ser nulo");
         }
 
-        if(transacaoDTO.getUsuarioId() == null){
-            throw new RegraNegocioException("Usuario ID não pode ser nulo");
-        }
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
-        Categoria categoria = categoriaRepository.findById(transacaoDTO.getCategoriaId())
+        Categoria categoria = categoriaRepository
+                .findByIdAndUsuarioEmail(transacaoDTO.getCategoriaId(), email)
                 .orElseThrow(() -> new RegraNegocioException("Categoria não encontrada"));
 
         if (!categoria.getTipo().equals(transacaoDTO.getTipo())) {
             throw new RegraNegocioException("Tipo da transação não bate com a categoria");
-        }
-        Usuario usuario = usuarioRepository.findById(transacaoDTO.getUsuarioId())
-                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
 
+        }
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
 
 
 
@@ -63,66 +71,88 @@ public class TransacaoService {
         transacao.setDescricao(transacaoDTO.getDescricao());
         transacao.setValor(transacaoDTO.getValor());
         transacao.setTipo(transacaoDTO.getTipo());
-        transacao.setData(transacaoDTO.getDate());
+        transacao.setData(transacaoDTO.getData());
         transacao.setCategoria(categoria);
         transacao.setUsuario(usuario);
 
-        System.out.println("Tipo transacao: " + transacao.getTipo());
-        System.out.println("Tipo categoria: " + categoria.getTipo());
-        System.out.println("Categoria ID: " + categoria.getId());
+        log.info("Tipo transacao: {}", transacao.getTipo());
+        log.info("Tipo categoria: {}", categoria.getTipo());
+        log.info("Categoria ID: {}", categoria.getId());
 
-        return mapToResponse(transacaoRepository.save(transacao));
+
+        Transacao salva = transacaoRepository.save(transacao);
+        log.info("SALVO ID: " + salva.getId());
+        return mapToResponse(salva);
+
     }
 
+    @Transactional
     public List<TransacaoResponseDTO> listar(){
-        return transacaoRepository.findAll()
+        String email = getEmailUsuarioLogado();
+
+        return transacaoRepository.findByUsuarioEmail(email)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     public TransacaoResponseDTO buscar(Long id){
-        Transacao transacao = transacaoRepository.findById(id)
+
+        String email = getEmailUsuarioLogado();
+
+        Transacao transacao = transacaoRepository
+                .findByIdAndUsuarioEmail(id, email)
                 .orElseThrow(() -> new RegraNegocioException("Transação não encontrada"));
+
 
         return mapToResponse(transacao);
     }
 
-    public TransacaoResponseDTO atualizar(Long id, TransacaoRequestDTO dto){
+    @Transactional
+    public TransacaoResponseDTO atualizar(Long id, TransacaoRequestDTO transacaoDTO){
 
-        Transacao transacao = transacaoRepository.findById(id)
+        String email = getEmailUsuarioLogado();
+
+        Transacao transacao = transacaoRepository
+                .findByIdAndUsuarioEmail(id, email)
                 .orElseThrow(() -> new RegraNegocioException("Transação não encontrada"));
 
-        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+        Categoria categoria = categoriaRepository.findById(transacaoDTO.getCategoriaId())
                 .orElseThrow(() -> new RegraNegocioException("Categoria não encontrada"));
 
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
 
-        if (!categoria.getTipo().equals(dto.getTipo())) {
+        if (!categoria.getTipo().equals(transacaoDTO.getTipo())) {
             throw new RegraNegocioException("Tipo da transação não bate com a categoria");
         }
 
-        if (dto.getTipo() == Tipo.RECEITA && dto.getValor() < 0) {
+        if (transacaoDTO.getTipo() == Tipo.RECEITA && transacaoDTO.getValor() < 0) {
             throw new RegraNegocioException("Receita não pode ser negativa");
         }
 
-        if (dto.getTipo() == Tipo.DESPESA && dto.getValor() < 0) {
+        if (transacaoDTO.getTipo() == Tipo.DESPESA && transacaoDTO.getValor() < 0) {
             throw new RegraNegocioException("Despesa não pode ser negativa");
         }
 
-        transacao.setDescricao(dto.getDescricao());
-        transacao.setValor(dto.getValor());
-        transacao.setTipo(dto.getTipo());
-        transacao.setData(dto.getDate());
+        transacao.setDescricao(transacaoDTO.getDescricao());
+        transacao.setValor(transacaoDTO.getValor());
+        transacao.setTipo(transacaoDTO.getTipo());
+        transacao.setData(transacaoDTO.getData());
         transacao.setCategoria(categoria);
-        transacao.setUsuario(usuario);
+
 
         return mapToResponse(transacaoRepository.save(transacao));
     }
 
+    @Transactional
     public void deletar(Long id){
-        transacaoRepository.deleteById(id);
+
+        String email = getEmailUsuarioLogado();
+
+        Transacao transacao = transacaoRepository
+                .findByIdAndUsuarioEmail(id, email)
+                .orElseThrow(() -> new RegraNegocioException("Transação não encontrada"));
+
+        transacaoRepository.delete(transacao);
     }
 
     private TransacaoResponseDTO mapToResponse(Transacao transacao){
@@ -140,15 +170,19 @@ public class TransacaoService {
     }
 
     public Map<String, Double> resumo(int mes, int ano){
-        List<Transacao> transacoes = transacaoRepository.buscarPorMesAno(mes, ano);
+
+        String email = getEmailUsuarioLogado();
+
+        List<Transacao> transacoes =
+                transacaoRepository.buscarPorMesAnoEUsuario(email, mes, ano);
 
         double totalReceitas = transacoes.stream()
-                .filter(transacao -> transacao.getTipo() == Tipo.RECEITA)
+                .filter(t -> t.getTipo() == Tipo.RECEITA)
                 .mapToDouble(Transacao::getValor)
                 .sum();
 
         double totalDespesas = transacoes.stream()
-                .filter(transacao ->  transacao.getTipo() == Tipo.DESPESA)
+                .filter(t -> t.getTipo() == Tipo.DESPESA)
                 .mapToDouble(Transacao::getValor)
                 .sum();
 
@@ -163,9 +197,24 @@ public class TransacaoService {
     }
 
     public List<TransacaoResponseDTO> filtrarPorMesAno(int mes, int ano){
-        return transacaoRepository.buscarPorMesAno(mes, ano)
+        String email = getEmailUsuarioLogado();
+
+        return transacaoRepository.buscarPorMesAnoEUsuario(email, mes, ano)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
+
+    private String getEmailUsuarioLogado() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+
+        return principal.toString();
+    }
+
 }

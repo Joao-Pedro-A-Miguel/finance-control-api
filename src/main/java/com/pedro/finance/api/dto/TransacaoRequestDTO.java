@@ -1,5 +1,6 @@
 package com.pedro.finance.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pedro.finance.api.Enum.Tipo;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -19,10 +20,8 @@ public class TransacaoRequestDTO {
     private Tipo tipo;
 
     @NotNull(message = "Data não pode ser nula")
-    private LocalDate date;
-
-    @NotNull(message = "Usuário é obrigatório")
-    private Long usuarioId;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate data;
 
     @NotNull(message = "Categoria é obrigatória")
     private Long categoriaId;

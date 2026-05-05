@@ -4,26 +4,26 @@ import com.pedro.finance.api.Exception.RegraNegocioException;
 import com.pedro.finance.api.dto.UsuarioRequestDTO;
 import com.pedro.finance.api.dto.UsuarioResponseDTO;
 import com.pedro.finance.api.entity.*;
-import com.pedro.finance.api.repository.TransacaoRepository;
 import com.pedro.finance.api.repository.UsuarioRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    private final TransacaoRepository transacaoRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, TransacaoRepository transacaoRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
-        this.transacaoRepository = transacaoRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-
+    @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO usuarioDTO){
 
         if(usuarioRepository.existsByEmail(usuarioDTO.getEmail())){
@@ -33,8 +33,10 @@ public class UsuarioService {
 
         Usuario usuario = new Usuario();
         usuario.setNome(usuarioDTO.getNome());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+        usuario.setEmail(usuarioDTO.getEmail().toLowerCase());
+        if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+        }
 
         Usuario salvo = usuarioRepository.save(usuario);
 
@@ -58,7 +60,7 @@ public class UsuarioService {
 
     public UsuarioResponseDTO buscarPorId(Long id){
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
 
         return new UsuarioResponseDTO(
                 usuario.getId(),
@@ -67,14 +69,18 @@ public class UsuarioService {
         );
     }
 
-    public UsuarioResponseDTO atualizar(Long id, UsuarioRequestDTO dto){
+    @Transactional
+    public UsuarioResponseDTO atualizar(Long id, UsuarioRequestDTO usuarioDTO){
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
 
-        usuario.setNome(dto.getNome());
-        usuario.setEmail(dto.getEmail());
-        usuario.setSenha(dto.getSenha());
+        usuario.setNome(usuarioDTO.getNome());
+        usuario.setEmail(usuarioDTO.getEmail());
+
+        if (usuarioDTO.getSenha() != null && ! usuarioDTO.getSenha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+        }
 
         Usuario salvo = usuarioRepository.save(usuario);
 
@@ -85,7 +91,29 @@ public class UsuarioService {
         );
     }
 
+    @Transactional
     public void delete(Long id){
-        usuarioRepository.deleteById(id);
+        String emailLogado = getEmailUsuarioLogado();
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado"));
+
+        if (!usuario.getEmail().equals(emailLogado)) {
+            throw new RegraNegocioException("Você só pode deletar sua própria conta");
+        }
+
+        usuarioRepository.delete(usuario);
+    }
+
+    private String getEmailUsuarioLogado() {
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+
+        return principal.toString();
     }
 }

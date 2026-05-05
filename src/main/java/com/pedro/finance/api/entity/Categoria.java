@@ -22,4 +22,8 @@ public class Categoria {
 
     @Enumerated(EnumType.STRING)
     private Tipo tipo;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }
