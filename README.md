@@ -91,108 +91,46 @@ POST /auth/login
  "token": "JWT_TOKEN_AQUI"
 }
 ```
- Endpoints principais
-👤 Usuário
-Método
-Endpoint
-Descrição
-POST
-/usuarios
-Criar usuário
-GET
-/usuarios
-Listar usuários
-GET
-/usuarios/{id}
-Buscar por ID
-PUT
-/usuarios/{id}
-Atualizar
-DELETE
-/usuarios/{id}
-Deletar (somente o próprio usuário)
+ ## 📌 Endpoints principais
 
+### 👤 Usuário
 
- Categoria
-Método
-Endpoint
-Descrição
-POST
-/categorias
-Criar
-GET
-/categorias
-Listar
-PUT
-/categorias/{id}
-Atualizar
-DELETE
-/categorias/{id}
-Deletar
+| Método | Endpoint        | Descrição |
+|--------|----------------|----------|
+| POST   | /usuarios      | Criar usuário |
+| GET    | /usuarios      | Listar usuários |
+| GET    | /usuarios/{id} | Buscar por ID |
+| PUT    | /usuarios/{id} | Atualizar |
+| DELETE | /usuarios/{id} | Deletar (somente o próprio usuário) |
 
- Transações
-Método
-Endpoint
-Descrição
-POST
-/transacoes
-Criar
-GET
-/transacoes
-Listar
-GET
-/transacoes/{id}
-Buscar
-PUT
-/transacoes/{id}
-Atualizar
-DELETE
-/transacoes/{id}
-Deletar
+---
 
+### 📁 Categoria
 
- Relatórios
-🔹 Resumo mensal
+| Método | Endpoint | Descrição |
+|--------|----------|----------|
+| POST   | /categorias | Criar |
+| GET    | /categorias | Listar |
+| PUT    | /categorias/{id} | Atualizar |
+| DELETE | /categorias/{id} | Deletar |
+
+---
+
+### 💰 Transações
+
+| Método | Endpoint | Descrição |
+|--------|----------|----------|
+| POST   | /transacoes | Criar |
+| GET    | /transacoes | Listar |
+| GET    | /transacoes/{id} | Buscar |
+| PUT    | /transacoes/{id} | Atualizar |
+| DELETE | /transacoes/{id} | Deletar |
+
+---
+
+## 📊 Relatórios
+
+### 🔹 Resumo mensal
+
+```http
 GET /transacoes/resumo?mes=5&ano=2026
-Response:
-```
-{
- "totalReceitas": 5000,
- "totalDespesas": 2000,
- "saldo": 3000
-}
-```
-
-🔹 Filtro por mês/ano
-GET /transacoes/filtro?mes=5&ano=2026
-
- Observações importantes
- 
-• Não existe perfil ADMIN neste projeto
-
-• Cada usuário acessa apenas seus próprios dados
-
-• Exclusões são restritas ao usuário autenticado
-
-• Projeto em evolução (pode receber melhorias futuras)
-
- Melhorias futuras
- • Paginação (Pageable)
- • Testes unitários
- • Documentação com Swagger
- • Dashboard (frontend futuro)
-
- Autor
-João Pedro
-
- Considerações finais
-• Projeto desenvolvido com foco em:
-
-• Boas práticas de backend
-
-• Segurança com JWT
-
-• Organização de código
-
-• Regras de negócio bem definidas
-
