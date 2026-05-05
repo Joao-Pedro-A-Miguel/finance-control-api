@@ -1,137 +1,144 @@
-# 💰 Finance Control API
+Finance Control API
 
-API REST para controle financeiro pessoal, permitindo gerenciar **usuários, categorias e transações**, com suporte a **relatórios mensais**.
+API REST para controle financeiro pessoal, permitindo o gerenciamento de usuários, categorias e transações com autenticação segura via JWT.
 
----
+Tecnologias utilizadas
+Java 17
+Spring Boot
+Spring Security
+JWT (JSON Web Token)
+Spring Data JPA
+MySQL
+Docker
 
-## 📌 Sobre o projeto
+Funcionalidades
+✅ Cadastro e autenticação de usuários
+✅ Criação, edição e exclusão de categorias
+✅ Registro de transações (receitas e despesas)
+✅ Filtro por mês e ano
+✅ Resumo financeiro (receitas, despesas e saldo)
+✅ Segurança por usuário (cada usuário acessa apenas seus dados)
+✅ Criptografia de senha com BCrypt
+✅ Proteção de rotas com JWT
+🛡️ Segurança
 
-Esta API foi desenvolvida com o objetivo de simular um sistema real de controle financeiro, aplicando boas práticas de desenvolvimento backend com Spring Boot.
+A aplicação utiliza autenticação baseada em JWT.
 
----
+O usuário faz login e recebe um token
+O token deve ser enviado no header das requisições:
+Authorization: Bearer SEU_TOKEN_AQUI
+ Isolamento de dados
 
-## 🚀 Tecnologias
+Cada usuário só pode acessar:
 
-* Java 17
-* Spring Boot
-* Spring Data JPA
-* Hibernate
-* MySQL
-* Docker & Docker Compose
-* Maven
+Suas próprias transações
+Suas próprias categorias
+Sua própria conta
 
----
+Isso é garantido por queries como:
 
-## ⚙️ Como executar o projeto
+findByIdAndUsuarioEmail
+ Estrutura do projeto
+api
+├── config
+├── controller
+├── dto
+├── entity
+├── exception
+├── repository
+├── security
+└── service
+ Configuração do ambiente
+ Variáveis de ambiente
 
-### 🔹 Pré-requisitos
+Crie um arquivo .env ou configure:
 
-* Java 17+
-* Docker (opcional)
-* Maven (ou usar o wrapper incluído)
-
----
-
-### 🔹 1. Clonar o repositório
-
-```bash
-git clone https://github.com/Joao-Pedro-A-Miguel/finance-control-api.git
-cd finance-control-api
-```
-
----
-
-### 🔹 2. Configurar variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-DB_HOST=localhost
-DB_NAME=finance_db
+DB_PORT=3306
+DB_NAME=finance
 DB_USER=root
-DB_PASSWORD=123456
-```
+DB_PASSWORD=senha
 
----
+JWT_SECRET=sua_chave_super_secreta_com_32_bytes
+application.properties
+spring.datasource.url=jdbc:mysql://localhost:${DB_PORT}/${DB_NAME}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASSWORD}
 
-### 🔹 3. Rodar com Docker (recomendado)
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
 
-```bash
+jwt.secret=${JWT_SECRET}
+🐳 Rodando com Docker
 docker-compose up --build
-```
-
----
-
-### 🔹 4. Rodar localmente
-
-```bash
+▶️ Executando o projeto
 ./mvnw spring-boot:run
-```
+🔑 Autenticação
+📌 Login
+POST /auth/login
+📥 Request
+{
+  "email": "usuario@email.com",
+  "senha": "123456"
+}
+📤 Response
+{
+  "token": "JWT_TOKEN_AQUI"
+}
+📌 Endpoints principais
+👤 Usuário
+Método	Endpoint	Descrição
+POST	/usuarios	Criar usuário
+GET	/usuarios	Listar usuários
+GET	/usuarios/{id}	Buscar por ID
+PUT	/usuarios/{id}	Atualizar
+DELETE	/usuarios/{id}	Deletar (somente o próprio usuário)
+📁 Categoria
+Método	Endpoint	Descrição
+POST	/categorias	Criar
+GET	/categorias	Listar
+PUT	/categorias/{id}	Atualizar
+DELETE	/categorias/{id}	Deletar
+💰 Transações
+Método	Endpoint	Descrição
+POST	/transacoes	Criar
+GET	/transacoes	Listar
+GET	/transacoes/{id}	Buscar
+PUT	/transacoes/{id}	Atualizar
+DELETE	/transacoes/{id}	Deletar
+📊 Relatórios
+🔹 Resumo mensal
+GET /transacoes/resumo?mes=5&ano=2026
 
-No Windows:
+📤 Response:
 
-```bash
-mvnw.cmd spring-boot:run
-```
+{
+  "totalReceitas": 5000,
+  "totalDespesas": 2000,
+  "saldo": 3000
+}
+🔹 Filtro por mês/ano
+GET /transacoes/filtro?mes=5&ano=2026
+⚠️ Observações importantes
+Não existe perfil ADMIN neste projeto
+Cada usuário acessa apenas seus próprios dados
+Exclusões são restritas ao próprio usuário autenticado
+O projeto está em evolução e pode receber melhorias futuras
+🚧 Melhorias futuras
+🔄 Paginação (Pageable)
+🧪 Testes unitários
+📈 Documentação com Swagger/OpenAPI
+🐳 Melhorias no Docker
+📊 Dashboard (frontend futuro)
+👨‍💻 Autor
 
----
+Desenvolvido por João Pedro
 
-## 📡 Endpoints principais
+Considerações finais
 
-### 👤 Usuários
+Este projeto foi desenvolvido com foco em boas práticas de backend:
 
-* `POST /usuarios` → criar usuário
-* `GET /usuarios` → listar usuários
-
-### 🏷️ Categorias
-
-* `POST /categorias` → criar categoria
-* `GET /categorias` → listar categorias
-
-### 💰 Transações
-
-* `POST /transacoes` → criar transação
-* `GET /transacoes` → listar transações
-
-### 📊 Relatórios
-
-* `GET /transacoes/resumo` → resumo financeiro mensal
-
----
-
-## 🔐 Segurança
-
-As credenciais do banco são configuradas via variáveis de ambiente (`.env`)
-e não são versionadas no repositório.
-
----
-
-## 📁 Estrutura do projeto
-
-```
-src/
- ├── controller
- ├── service
- ├── repository
- ├── entity
- └── config
-```
-
----
-
-## 🧠 Melhorias futuras
-
-* Autenticação com JWT
-* Testes automatizados
-* Documentação com Swagger
-* Deploy em nuvem
-
----
-
-## 👨‍💻 Autor
-
-João Pedro Miguel
-[https://github.com/Joao-Pedro-A-Miguel](https://github.com/Joao-Pedro-A-Miguel)
-
----
+Separação de responsabilidades
+Segurança com JWT
+Validações de negócio
+Código limpo e organizado
 
