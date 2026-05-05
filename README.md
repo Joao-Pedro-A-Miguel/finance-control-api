@@ -58,9 +58,11 @@ src/main/java/com/pedro/finance/api
 ├── repository
 ├── security
 └── service
+```
+## Configuração do ambiente
 
- Configuração do ambiente
- Variáveis de ambiente
+Variáveis de ambiente
+```
 Configure as variáveis:
 DB_PORT=3306
 DB_NAME=finance
@@ -86,14 +88,16 @@ POST /auth/login
  "email": "usuario@email.com",
  "senha": "123456"
 }
+```
  Response
+ ```
 {
  "token": "JWT_TOKEN_AQUI"
 }
 ```
- ## 📌 Endpoints principais
+ ##  Endpoints principais
 
-### 👤 Usuário
+###  Usuário
 
 | Método | Endpoint        | Descrição |
 |--------|----------------|----------|
