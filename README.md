@@ -1,4 +1,3 @@
-=#  Finance Control API
 
 API REST para controle financeiro pessoal, permitindo o gerenciamento de usuários, categorias e transações com autenticação segura via JWT.
 
@@ -69,15 +68,18 @@ DB_USER=root
 DB_PASSWORD=senha
 
 JWT_SECRET=sua_chave_super_secreta_com_32_bytes
-
+```
 🐳 Rodando com Docker
+```
 docker-compose up --build
-
+````
  Executando o projeto
+ ```
 ./mvnw spring-boot:run
-
+```
  Autenticação
  Login
+ ```
 POST /auth/login
  Request
 {
@@ -88,7 +90,7 @@ POST /auth/login
 {
  "token": "JWT_TOKEN_AQUI"
 }
-
+```
  Endpoints principais
 👤 Usuário
 Método
